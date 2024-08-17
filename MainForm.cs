@@ -96,6 +96,7 @@ namespace WizClicker
             key_press_tm.Start();
 
             Config.AppConfig configExtracted = Config.Extract();
+
             if (configExtracted != null)
             {
                 userKeybindsList.SelectedIndex = userKeybindsList.Items.IndexOf(configExtracted.SavedKey);
@@ -106,7 +107,9 @@ namespace WizClicker
             else
             {
                 userKeybindsList.SelectedIndex = 0;
+                confirmed_key = (Key)userKeybindsList.SelectedItem;
                 //CPS Min value
+                confirmed_cps = (int)Math.Ceiling(1000.0 / (int)cps.Value);
             }
         }
         private void confirm_btn_Click(object sender, EventArgs e)
