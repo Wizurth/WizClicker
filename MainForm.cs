@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Input;
 
@@ -17,7 +11,7 @@ namespace WizClicker
         public MainForm()
         {
             InitializeComponent();
-            userKeybindsList.Items.AddRange(new object[] {Key.F1, Key.F2, Key.F3, Key.F4, Key.F5, Key.F6, Key.F7, Key.F8, Key.F9, Key.F10, Key.F12, Key.A, Key.B, Key.C, Key.D, Key.E, Key.R, Key.Multiply, Key.Add, Key.Subtract, Key.OemComma, Key.OemPeriod, Key.OemPlus});
+            userKeybindsList.Items.AddRange(new object[] { Key.F1, Key.F2, Key.F3, Key.F4, Key.F5, Key.F6, Key.F7, Key.F8, Key.F9, Key.F10, Key.F12, Key.A, Key.B, Key.C, Key.D, Key.E, Key.R, Key.Multiply, Key.Add, Key.Subtract, Key.OemComma, Key.OemPeriod, Key.OemPlus });
             keybinds_InfoToolTip.SetToolTip(userKeybindsList,
                 "OemCommand = Virgule" +
                 Environment.NewLine +
@@ -29,12 +23,15 @@ namespace WizClicker
         int confirmed_cps = 1;
         bool key_press_tm_CanStart = false;
 
+        private Thread clickThread;
+        bool clicking = false;
+
 
         #region TOOLS BAR
         //CUSTOM TOOLS BAR ---------
-        [DllImport("user32.DLL", EntryPoint = "ReleaseCapture")]
+        [System.Runtime.InteropServices.DllImport("user32.DLL", EntryPoint = "ReleaseCapture")]
         private extern static void ReleaseCapture();
-        [DllImport("user32.DLL", EntryPoint = "SendMessage")]
+        [System.Runtime.InteropServices.DllImport("user32.DLL", EntryPoint = "SendMessage")]
         private extern static void SendMessage(System.IntPtr one, int two, int three, int four);
 
         private void Custom_ToolsBar_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -92,10 +89,7 @@ namespace WizClicker
 
         private void MainForm_Load(object sender, EventArgs e) //START KEY FINDER TIMER
         {
-            key_press_tm.Interval = 100;
-            key_press_tm.Start();
-
-            Config.AppConfig configExtracted = Config.Extract();
+            Config.AppConfig configExtracted = Config.Extract(userKeybindsList, (int)cps.Maximum);
 
             if (configExtracted != null)
             {
@@ -128,7 +122,7 @@ namespace WizClicker
 
         //IMPORT
 
-        [DllImport("user32.dll")]
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
         static extern void mouse_event(int dwFlags, int dx, int dy, int dwdata, int dwextrainfo);
         public enum mouseeventflags
         {
@@ -147,25 +141,39 @@ namespace WizClicker
         {
             if (Keyboard.IsKeyToggled(confirmed_key))
             {
-                if (key_press_tm_CanStart == true)
+                if (!clicking && key_press_tm_CanStart == true)
                 {
-                    key_press_tm.Start();
+                    clicking = true;
                     state_text.Text = "WizClicker activé";
                     state_text.ForeColor = Color.FromArgb(255, 90, 0);
+                    clickThread = new Thread(ClickLoop);
+                    clickThread.Start();
                 }
             }
-
-            if (!Keyboard.IsKeyToggled(confirmed_key))
+            else
             {
-                key_press_tm.Stop();
-                state_text.Text = "WizClicker en attente";
-                state_text.ForeColor = Color.FromArgb(255, 200, 0);
                 key_press_tm_CanStart = true;
+                if (clicking)
+                {
+                    clicking = false;
+                    state_text.Text = "WizClicker en attente";
+                    state_text.ForeColor = Color.FromArgb(255, 200, 0);
+                    clickThread.Join();
+                }
             }
         }
-        private void key_press_tm_Tick(object sender, EventArgs e)
+
+        private void ClickLoop()
         {
-            leftclick(new Point(MousePosition.X, MousePosition.Y));
+            while (clicking)
+            {
+                Console.WriteLine("fire");
+                leftclick(new Point(MousePosition.X, MousePosition.Y));
+                Thread.Sleep(confirmed_cps); // confirmed_cps is now the actual delay between clicks
+            }
         }
+
+        public int getMaxCps() { return (int)cps.Maximum; }
+        public ComboBox keylistComboBox() { return userKeybindsList; }
     }
 }

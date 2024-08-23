@@ -35,7 +35,6 @@
             this.userKeybindsList = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.key_finder_tm = new System.Windows.Forms.Timer(this.components);
-            this.key_press_tm = new System.Windows.Forms.Timer(this.components);
             this.confirm_btn = new System.Windows.Forms.Button();
             this.confirmed_text = new System.Windows.Forms.Label();
             this.text_panel = new System.Windows.Forms.Panel();
@@ -59,7 +58,7 @@
             this.cps.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cps.Location = new System.Drawing.Point(153, 160);
             this.cps.Maximum = new decimal(new int[] {
-            10,
+            300,
             0,
             0,
             0});
@@ -118,11 +117,6 @@
             // 
             this.key_finder_tm.Enabled = true;
             this.key_finder_tm.Tick += new System.EventHandler(this.key_finder_tm_Tick);
-            // 
-            // key_press_tm
-            // 
-            this.key_press_tm.Interval = 300;
-            this.key_press_tm.Tick += new System.EventHandler(this.key_press_tm_Tick);
             // 
             // confirm_btn
             // 
@@ -302,7 +296,6 @@
         private System.Windows.Forms.ComboBox userKeybindsList;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Timer key_finder_tm;
-        private System.Windows.Forms.Timer key_press_tm;
         private System.Windows.Forms.Button confirm_btn;
         private System.Windows.Forms.Label confirmed_text;
         private System.Windows.Forms.Panel text_panel;

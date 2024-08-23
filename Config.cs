@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Input;
 using Newtonsoft.Json;
 
 namespace WizClicker
@@ -9,8 +8,9 @@ namespace WizClicker
     {
         public static string location => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"WizProductions\WizClicker\");
         static string filename = "WizAppSettings.json";
+        static string logsfilename = "WizAppLogs.txt";
 
-        public static void Update(Key saved_key, int saved_cps)
+        public static void Update(System.Windows.Input.Key saved_key, int saved_cps)
         {
             // Make sure to config folder existing
             if (!Directory.Exists(location))
@@ -30,8 +30,9 @@ namespace WizClicker
             File.WriteAllText(Path.Combine(location, filename), json_write);
         }
 
-        public static AppConfig Extract()
+        public static AppConfig Extract(System.Windows.Forms.ComboBox keylistComboBox, int maxCPS)
         {
+
             // Vérifie si le fichier existe
             if (File.Exists(Path.Combine(location, filename)))
             {
@@ -40,7 +41,18 @@ namespace WizClicker
 
                 // Désérialise le JSON en un objet AppSettings
                 AppConfig config = JsonConvert.DeserializeObject<AppConfig>(json);
-                return config;
+
+                if (config.SavedCps <= maxCPS && config.SavedCps > 0 && keylistComboBox.Items.Contains(config.SavedKey)) //CONFIG IS VALID
+                { return config; }
+                else
+                {
+                    Update((System.Windows.Input.Key)keylistComboBox.Items[0], 1);
+                    json = File.ReadAllText(Path.Combine(location, filename));
+                    config = JsonConvert.DeserializeObject<AppConfig>(json);
+                    WriteInLogs("Erreur : Le fichier de configuration a été compromis, il a donc été réinitialisé.");
+
+                    return config;
+                }
             }
             else
             {
@@ -48,9 +60,20 @@ namespace WizClicker
                 return null;
             }
         }
+
+        public static void WriteInLogs(string logs_write) //Logs
+        {
+            string logs_convert = DateTime.Now.ToString("[dd-MM-yyyy:HH:mm:sstt]=>") + logs_write + Environment.NewLine;
+            if (File.Exists(Path.Combine(location, logsfilename)))
+            { File.AppendAllText(Path.Combine(location, logsfilename), logs_convert); }
+            else
+            { File.WriteAllText(Path.Combine(location, logsfilename), logs_convert); }
+        }
+
+
         public class AppConfig
         {
-            public Key SavedKey { get; set; }
+            public System.Windows.Input.Key SavedKey { get; set; }
             public int SavedCps { get; set; }
         }
     }
