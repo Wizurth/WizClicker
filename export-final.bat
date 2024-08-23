@@ -1,1 +1,1 @@
-ILRepack.exe /ndebug /out:WizClickerOut.exe bin/Debug/WizClicker.exe bin/Debug/Newtonsoft.Json.dll
+ILRepack.exe /ndebug /out:WizClickerOut.exe bin/Debug/WizClicker.exe bin/Debug/Newtonsoft.Json.dll bin/Debug/WindowsInput.dll

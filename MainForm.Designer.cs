@@ -127,7 +127,7 @@
             this.confirm_btn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.confirm_btn.FlatAppearance.BorderSize = 0;
             this.confirm_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.confirm_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.confirm_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.confirm_btn.Location = new System.Drawing.Point(75, 350);
             this.confirm_btn.Name = "confirm_btn";
             this.confirm_btn.Size = new System.Drawing.Size(241, 30);
@@ -241,6 +241,8 @@
             this.Custom_ToolsBar.Size = new System.Drawing.Size(400, 38);
             this.Custom_ToolsBar.TabIndex = 11;
             this.Custom_ToolsBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Custom_ToolsBar_MouseDown);
+            this.Custom_ToolsBar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Custom_ToolsBar_MouseMove);
+            this.Custom_ToolsBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Custom_ToolsBar_MouseUp);
             // 
             // button1
             // 

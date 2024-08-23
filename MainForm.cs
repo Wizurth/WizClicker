@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Input;
+using WindowsInput;
 
 namespace WizClicker
 {
@@ -11,6 +12,7 @@ namespace WizClicker
         public MainForm()
         {
             InitializeComponent();
+
             userKeybindsList.Items.AddRange(new object[] { Key.F1, Key.F2, Key.F3, Key.F4, Key.F5, Key.F6, Key.F7, Key.F8, Key.F9, Key.F10, Key.F12, Key.A, Key.B, Key.C, Key.D, Key.E, Key.R, Key.Multiply, Key.Add, Key.Subtract, Key.OemComma, Key.OemPeriod, Key.OemPlus });
             keybinds_InfoToolTip.SetToolTip(userKeybindsList,
                 "OemCommand = Virgule" +
@@ -20,25 +22,49 @@ namespace WizClicker
                 "OemPlus = Egal");
         }
         Key confirmed_key;
-        int confirmed_cps = 1;
+        int confirmed_cps;
         bool key_press_tm_CanStart = false;
 
         private Thread clickThread;
         bool clicking = false;
 
-
         #region TOOLS BAR
         //CUSTOM TOOLS BAR ---------
-        [System.Runtime.InteropServices.DllImport("user32.DLL", EntryPoint = "ReleaseCapture")]
-        private extern static void ReleaseCapture();
-        [System.Runtime.InteropServices.DllImport("user32.DLL", EntryPoint = "SendMessage")]
-        private extern static void SendMessage(System.IntPtr one, int two, int three, int four);
+
+        private bool dragging = false;
+        private Point dragStartPoint;
 
         private void Custom_ToolsBar_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            ReleaseCapture();
-            SendMessage(Handle, 0x112, 0xf012, 0);
+            if (e.Button == MouseButtons.Left)
+            {
+                // Capture la position du curseur par rapport à la barre d'outils
+                dragging = true;
+                dragStartPoint = e.Location;
+            }
         }
+        private void Custom_ToolsBar_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                // Stop dragging
+                dragging = false;
+            }
+        }
+        private void Custom_ToolsBar_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (dragging)
+            {
+                // Calcul du décalage en pixels
+                int offsetX = e.X - dragStartPoint.X;
+                int offsetY = e.Y - dragStartPoint.Y;
+                // Mise à jour de la position du formulaire
+                this.Left += offsetX;
+                this.Top += offsetY;
+            }
+        }
+
+        //----
 
         private void ToolsBar_Close_Click(object sender, EventArgs e)
         {
@@ -86,26 +112,16 @@ namespace WizClicker
         //END TOOLS BAR ---------
         #endregion
 
-
         private void MainForm_Load(object sender, EventArgs e) //START KEY FINDER TIMER
         {
             Config.AppConfig configExtracted = Config.Extract(userKeybindsList, (int)cps.Maximum);
 
-            if (configExtracted != null)
-            {
                 userKeybindsList.SelectedIndex = userKeybindsList.Items.IndexOf(configExtracted.SavedKey);
                 cps.Value = configExtracted.SavedCps;
                 confirmed_key = configExtracted.SavedKey;
                 confirmed_cps = (int)Math.Ceiling(1000.0 / (int)configExtracted.SavedCps);
-            }
-            else
-            {
-                userKeybindsList.SelectedIndex = 0;
-                confirmed_key = (Key)userKeybindsList.SelectedItem;
-                //CPS Min value
-                confirmed_cps = (int)Math.Ceiling(1000.0 / (int)cps.Value);
-            }
         }
+
         private void confirm_btn_Click(object sender, EventArgs e)
         {
             if (userKeybindsList != null && (int)cps.Value > 0)
@@ -115,27 +131,12 @@ namespace WizClicker
                 confirmed_text.Text = "Saisie enregistrée"; confirmed_text.ForeColor = Color.FromArgb(0, 200, 50);
                 key_press_tm_CanStart = false;
 
-                Config.Update(confirmed_key, (int)cps.Value);
+                Config.Update(confirmed_key, (int)cps.Value, false);
             }
-            else { confirmed_text.Text = "Saisie incorrecte, réessayer"; confirmed_text.ForeColor = Color.FromArgb(200, 50, 0); } //ERREUR
+            else { confirmed_text.Text = "Saisie incorrecte, réessayer"; confirmed_text.ForeColor = Color.FromArgb(200, 50, 0); }
         }
 
-        //IMPORT
-
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        static extern void mouse_event(int dwFlags, int dx, int dy, int dwdata, int dwextrainfo);
-        public enum mouseeventflags
-        {
-            LeftDown = 2,
-            LeftUp = 4,
-        }
-        public void leftclick(Point p)
-        {
-            mouse_event((int)(mouseeventflags.LeftDown), p.X, p.Y, 0, 0);
-            mouse_event((int)(mouseeventflags.LeftUp), p.X, p.Y, 0, 0);
-        }
-
-        //TIMERS
+        //KEY FINDER TIMER
 
         private void key_finder_tm_Tick(object sender, EventArgs e)
         {
@@ -167,13 +168,18 @@ namespace WizClicker
         {
             while (clicking)
             {
-                Console.WriteLine("fire");
-                leftclick(new Point(MousePosition.X, MousePosition.Y));
-                Thread.Sleep(confirmed_cps); // confirmed_cps is now the actual delay between clicks
+                leftclick();
+                Thread.Sleep(confirmed_cps);
             }
         }
 
+        public void leftclick()
+        {
+            var sim = new InputSimulator();
+            sim.Mouse.LeftButtonClick();
+        }
+
         public int getMaxCps() { return (int)cps.Maximum; }
-        public ComboBox keylistComboBox() { return userKeybindsList; }
+        public System.Windows.Forms.ComboBox keylistComboBox() { return userKeybindsList; }
     }
 }

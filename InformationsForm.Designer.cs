@@ -30,8 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InformationsForm));
             this.Custom_ToolsBar = new System.Windows.Forms.Panel();
-            this.ToolsBar_Close = new System.Windows.Forms.Button();
             this.ToolsBar_Close_InfForm = new System.Windows.Forms.Button();
+            this.ToolsBar_Close = new System.Windows.Forms.Button();
             this.Custom_ToolsBar.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -46,21 +46,8 @@
             this.Custom_ToolsBar.Size = new System.Drawing.Size(400, 38);
             this.Custom_ToolsBar.TabIndex = 2;
             this.Custom_ToolsBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Custom_ToolsBar_MouseDown);
-            // 
-            // ToolsBar_Close
-            // 
-            this.ToolsBar_Close.AutoSize = true;
-            this.ToolsBar_Close.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ToolsBar_Close.Cursor = System.Windows.Forms.Cursors.Default;
-            this.ToolsBar_Close.FlatAppearance.BorderSize = 0;
-            this.ToolsBar_Close.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ToolsBar_Close.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.ToolsBar_Close.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ToolsBar_Close.Location = new System.Drawing.Point(344, 2);
-            this.ToolsBar_Close.Name = "ToolsBar_Close";
-            this.ToolsBar_Close.Size = new System.Drawing.Size(49, 27);
-            this.ToolsBar_Close.TabIndex = 0;
-            this.ToolsBar_Close.UseVisualStyleBackColor = true;
+            this.Custom_ToolsBar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Custom_ToolsBar_MouseMove);
+            this.Custom_ToolsBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Custom_ToolsBar_MouseUp);
             // 
             // ToolsBar_Close_InfForm
             // 
@@ -80,6 +67,21 @@
             this.ToolsBar_Close_InfForm.Click += new System.EventHandler(this.ToolsBar_Close_InfForm_Click);
             this.ToolsBar_Close_InfForm.MouseEnter += new System.EventHandler(this.ToolsBar_Close_InfForm_MouseEnter);
             this.ToolsBar_Close_InfForm.MouseLeave += new System.EventHandler(this.ToolsBar_Close_InfForm_MouseLeave);
+            // 
+            // ToolsBar_Close
+            // 
+            this.ToolsBar_Close.AutoSize = true;
+            this.ToolsBar_Close.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ToolsBar_Close.Cursor = System.Windows.Forms.Cursors.Default;
+            this.ToolsBar_Close.FlatAppearance.BorderSize = 0;
+            this.ToolsBar_Close.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.ToolsBar_Close.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.ToolsBar_Close.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ToolsBar_Close.Location = new System.Drawing.Point(344, 2);
+            this.ToolsBar_Close.Name = "ToolsBar_Close";
+            this.ToolsBar_Close.Size = new System.Drawing.Size(49, 27);
+            this.ToolsBar_Close.TabIndex = 0;
+            this.ToolsBar_Close.UseVisualStyleBackColor = true;
             // 
             // InformationsForm
             // 

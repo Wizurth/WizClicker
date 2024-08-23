@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
-using Newtonsoft.Json;
+using System.Windows.Input;
 
 namespace WizClicker
 {
@@ -10,7 +11,7 @@ namespace WizClicker
         static string filename = "WizAppSettings.json";
         static string logsfilename = "WizAppLogs.txt";
 
-        public static void Update(System.Windows.Input.Key saved_key, int saved_cps)
+        public static void Update(System.Windows.Input.Key saved_key, int saved_cps, bool by_sys)
         {
             // Make sure to config folder existing
             if (!Directory.Exists(location))
@@ -28,10 +29,18 @@ namespace WizClicker
             // Write into json
             string json_write = JsonConvert.SerializeObject(config, Formatting.Indented);
             File.WriteAllText(Path.Combine(location, filename), json_write);
+            if(by_sys != true)
+            {
+                WriteInLogs("The configuration file has been updated by the user.");
+                WriteInLogs("The new values are:");
+                WriteInLogs("Key = " + saved_key);
+                WriteInLogs("CPS = " + saved_cps);
+            }
         }
 
         public static AppConfig Extract(System.Windows.Forms.ComboBox keylistComboBox, int maxCPS)
         {
+            AppConfig config = null;
 
             // Vérifie si le fichier existe
             if (File.Exists(Path.Combine(location, filename)))
@@ -39,25 +48,46 @@ namespace WizClicker
                 // Lit le contenu du fichier JSON
                 string json = File.ReadAllText(Path.Combine(location, filename));
 
-                // Désérialise le JSON en un objet AppSettings
-                AppConfig config = JsonConvert.DeserializeObject<AppConfig>(json);
+                try //CHECK VALIDITY OF CONFIG FILE
+                {
+                    config = JsonConvert.DeserializeObject<AppConfig>(json); //TRY TO READ AND CONVERT FILE    |     // Désérialise le JSON en un objet AppSettings
+                }
+                catch //CANNOT READ => RESET VALUE
+                {
+                    config = null;
+                }
 
-                if (config.SavedCps <= maxCPS && config.SavedCps > 0 && keylistComboBox.Items.Contains(config.SavedKey)) //CONFIG IS VALID
-                { return config; }
+                if (config !=null && config.SavedCps <= maxCPS && config.SavedCps > 0 && keylistComboBox.Items.Contains(config.SavedKey)) //CONFIG IS VALID
+                {
+                    return config;
+                }
                 else
                 {
-                    Update((System.Windows.Input.Key)keylistComboBox.Items[0], 1);
+                    Update((System.Windows.Input.Key)keylistComboBox.Items[0], 1, true);
                     json = File.ReadAllText(Path.Combine(location, filename));
                     config = JsonConvert.DeserializeObject<AppConfig>(json);
-                    WriteInLogs("Erreur : Le fichier de configuration a été compromis, il a donc été réinitialisé.");
+                    WriteInLogs("Error: unable to read configuration file, file has been reset.");
 
                     return config;
                 }
             }
             else
             {
-                Console.WriteLine("Le fichier JSON n'existe pas.");
-                return null;
+                // Make sure to config folder existing
+                if (!Directory.Exists(location))
+                {
+                    Directory.CreateDirectory(location);
+                }
+
+                WriteInLogs("Retrieving the configuration file from this location: " + location + filename);
+                WriteInLogs("Error: the configuration file cannot be found.");
+                WriteInLogs("Write the configuration file...");
+
+                Update((System.Windows.Input.Key)keylistComboBox.Items[0], 1, true);
+                config = JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(Path.Combine(location, filename)));
+
+                WriteInLogs("The configuration file has been written.");
+                return config;
             }
         }
 
