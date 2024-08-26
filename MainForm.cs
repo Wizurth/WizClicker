@@ -116,10 +116,11 @@ namespace WizClicker
         {
             Config.AppConfig configExtracted = Config.Extract(userKeybindsList, (int)cps.Maximum);
 
-                userKeybindsList.SelectedIndex = userKeybindsList.Items.IndexOf(configExtracted.SavedKey);
-                cps.Value = configExtracted.SavedCps;
-                confirmed_key = configExtracted.SavedKey;
-                confirmed_cps = (int)Math.Ceiling(1000.0 / (int)configExtracted.SavedCps);
+            userKeybindsList.SelectedIndex = userKeybindsList.Items.IndexOf(configExtracted.SavedKey);
+            cps.Value = configExtracted.SavedCps;
+            confirmed_key = configExtracted.SavedKey;
+            confirmed_cps = (int)Math.Ceiling(1000.0 / (int)configExtracted.SavedCps);
+            state_text.Text = "";
         }
 
         private void confirm_btn_Click(object sender, EventArgs e)
