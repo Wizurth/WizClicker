@@ -13,6 +13,7 @@ namespace WizClicker
         {
             InitializeComponent();
 
+            TargetClickButton.Items.AddRange(new string[] { "Left_Click", "Right_Click", "Middle_Click" });
             userKeybindsList.Items.AddRange(new object[] { Key.F1, Key.F2, Key.F3, Key.F4, Key.F5, Key.F6, Key.F7, Key.F8, Key.F9, Key.F10, Key.F12, Key.A, Key.B, Key.C, Key.D, Key.E, Key.R, Key.Multiply, Key.Add, Key.Subtract, Key.OemComma, Key.OemPeriod, Key.OemPlus });
             keybinds_InfoToolTip.SetToolTip(userKeybindsList,
                 "OemCommand = Virgule" +
@@ -23,6 +24,7 @@ namespace WizClicker
         }
         Key confirmed_key;
         int confirmed_cps;
+        string confirmed_targetClickButton;
         bool key_press_tm_CanStart = false;
 
         private Thread clickThread;
@@ -114,25 +116,30 @@ namespace WizClicker
 
         private void MainForm_Load(object sender, EventArgs e) //START KEY FINDER TIMER
         {
-            Config.AppConfig configExtracted = Config.Extract(userKeybindsList, (int)cps.Maximum);
+            Config.AppConfig configExtracted = Config.Extract(userKeybindsList, (int)cps.Maximum, TargetClickButton);
 
             userKeybindsList.SelectedIndex = userKeybindsList.Items.IndexOf(configExtracted.SavedKey);
+            TargetClickButton.SelectedIndex = TargetClickButton.Items.IndexOf(configExtracted.SavedTargetButton);
             cps.Value = configExtracted.SavedCps;
             confirmed_key = configExtracted.SavedKey;
+            confirmed_targetClickButton = configExtracted.SavedTargetButton;
             confirmed_cps = (int)Math.Ceiling(1000.0 / (int)configExtracted.SavedCps);
             state_text.Text = "";
         }
 
         private void confirm_btn_Click(object sender, EventArgs e)
         {
-            if (userKeybindsList != null && (int)cps.Value > 0)
+            if (userKeybindsList.SelectedItem != null && (int)cps.Value > 0 && TargetClickButton.SelectedItem != null)
             {
                 confirmed_key = (Key)userKeybindsList.SelectedItem;
+                confirmed_targetClickButton = (string)TargetClickButton.SelectedItem;
+
                 confirmed_cps = (int)Math.Ceiling(1000.0 / (int)cps.Value);
                 confirmed_text.Text = "Saisie enregistrée"; confirmed_text.ForeColor = Color.FromArgb(0, 200, 50);
+                //confirmed_targetbutton is initialized by event
                 key_press_tm_CanStart = false;
 
-                Config.Update(confirmed_key, (int)cps.Value, false);
+                Config.Update(confirmed_key, (int)cps.Value, confirmed_targetClickButton, false);
             }
             else { confirmed_text.Text = "Saisie incorrecte, réessayer"; confirmed_text.ForeColor = Color.FromArgb(200, 50, 0); }
         }
@@ -160,17 +167,46 @@ namespace WizClicker
                     clicking = false;
                     state_text.Text = "WizClicker en attente";
                     state_text.ForeColor = Color.FromArgb(255, 200, 0);
-                    clickThread.Join();
+                    clickThread.Join(); //Close thread
                 }
             }
         }
 
         private void ClickLoop()
         {
-            while (clicking)
+            Console.WriteLine(confirmed_targetClickButton);
+            switch (confirmed_targetClickButton)
             {
-                leftclick();
-                Thread.Sleep(confirmed_cps);
+                case "Left_Click":
+                    Console.WriteLine("Left_Click");
+                    while (clicking)
+                    {
+                        leftclick();
+                        Thread.Sleep(confirmed_cps);
+                    }
+                    break;
+
+                case "Right_Click":
+                    Console.WriteLine("Right_Click");
+                    while (clicking)
+                    {
+                        rightclick();
+                        Thread.Sleep(confirmed_cps);
+                    }
+                    break;
+
+                case "Middle_Click":
+                    Console.WriteLine("Middle_Click");
+                    while (clicking)
+                    {
+                        middleclick();
+                        Thread.Sleep(confirmed_cps);
+                    }
+                    break;
+
+                default:
+                    Console.WriteLine("default");
+                    break;
             }
         }
 
@@ -178,6 +214,18 @@ namespace WizClicker
         {
             var sim = new InputSimulator();
             sim.Mouse.LeftButtonClick();
+        }
+
+        public void rightclick()
+        {
+            var sim = new InputSimulator();
+            sim.Mouse.RightButtonClick();
+        }
+
+        public void middleclick()
+        {
+            var sim = new InputSimulator();
+            sim.Mouse.MiddleButtonClick();
         }
 
         public int getMaxCps() { return (int)cps.Maximum; }

@@ -11,7 +11,7 @@ namespace WizClicker
         static string filename = "WizAppSettings.json";
         static string logsfilename = "WizAppLogs.txt";
 
-        public static void Update(System.Windows.Input.Key saved_key, int saved_cps, bool by_sys)
+        public static void Update(System.Windows.Input.Key saved_key, int saved_cps, string saved_TargetButton, bool by_sys)
         {
             // Make sure to config folder existing
             if (!Directory.Exists(location))
@@ -23,6 +23,7 @@ namespace WizClicker
             AppConfig config = new AppConfig
             {
                 SavedKey = saved_key,
+                SavedTargetButton = saved_TargetButton,
                 SavedCps = saved_cps
             };
 
@@ -34,11 +35,12 @@ namespace WizClicker
                 WriteInLogs("The configuration file has been updated by the user.");
                 WriteInLogs("The new values are:");
                 WriteInLogs("Key = " + saved_key);
+                WriteInLogs("Target Button = " + saved_TargetButton);
                 WriteInLogs("CPS = " + saved_cps);
             }
         }
 
-        public static AppConfig Extract(System.Windows.Forms.ComboBox keylistComboBox, int maxCPS)
+        public static AppConfig Extract(System.Windows.Forms.ComboBox keylistComboBox, int maxCPS, System.Windows.Forms.ComboBox targetClickButton)
         {
             AppConfig config = null;
 
@@ -57,13 +59,13 @@ namespace WizClicker
                     config = null;
                 }
 
-                if (config !=null && config.SavedCps <= maxCPS && config.SavedCps > 0 && keylistComboBox.Items.Contains(config.SavedKey)) //CONFIG IS VALID
+                if (config !=null && config.SavedCps <= maxCPS && config.SavedCps > 0 && keylistComboBox.Items.Contains(config.SavedKey) && targetClickButton.Items.Contains(config.SavedTargetButton)) //CONFIG IS VALID
                 {
                     return config;
                 }
                 else
                 {
-                    Update((System.Windows.Input.Key)keylistComboBox.Items[0], 1, true);
+                    Update((System.Windows.Input.Key)keylistComboBox.Items[0], 1, "Left_Click", true); //DEFAULT CONFIG
                     json = File.ReadAllText(Path.Combine(location, filename));
                     config = JsonConvert.DeserializeObject<AppConfig>(json);
                     WriteInLogs("Error: unable to read configuration file, file has been reset.");
@@ -83,7 +85,7 @@ namespace WizClicker
                 WriteInLogs("Error: the configuration file cannot be found.");
                 WriteInLogs("Write the configuration file...");
 
-                Update((System.Windows.Input.Key)keylistComboBox.Items[0], 1, true);
+                Update((System.Windows.Input.Key)keylistComboBox.Items[0], 1, "Left_Click", true); //DEFAULT CONFIG
                 config = JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(Path.Combine(location, filename)));
 
                 WriteInLogs("The configuration file has been written.");
@@ -105,6 +107,7 @@ namespace WizClicker
         {
             public System.Windows.Input.Key SavedKey { get; set; }
             public int SavedCps { get; set; }
+            public string SavedTargetButton { get; set; }
         }
     }
 }

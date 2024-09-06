@@ -55,8 +55,8 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
-    <Reference Include="WindowsInput, Version=1.0.4.0, Culture=neutral, PublicKeyToken=9b287f7dc5073cad, processorArchitecture=MSIL">
-      <HintPath>packages\InputSimulator.1.0.4.0\lib\net20\WindowsInput.dll</HintPath>
+    <Reference Include="WindowsInput, Version=1.0.6.0, Culture=neutral, PublicKeyToken=de2685b4776e9c2e, processorArchitecture=MSIL">
+      <HintPath>packages\InputSimulatorPlus.1.0.7\lib\net20\WindowsInput.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +131,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".nuget\mouse-keyboard-hook-logo.png" />
+    <None Include="Resources\MouseTargetButton_MiddleButton.png" />
+    <None Include="Resources\MouseTargetButton_LeftButton.png" />
+    <None Include="Resources\MouseTargetButton_RightButton.png" />
     <Content Include="WizClicker.ico" />
     <None Include="Resources\WizClicker.ico" />
   </ItemGroup>
