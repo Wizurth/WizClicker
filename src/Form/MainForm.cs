@@ -7,7 +7,6 @@ using WindowsInput; // InputSimulatorPlus2 - NuGet package 1.0.9
 
 namespace WizClicker
 {
-
 //#############################################################################
 //##--------------------------------- CLASS ---------------------------------##
 //#############################################################################
@@ -24,7 +23,7 @@ public partial class MainForm : Form
         MyKeyListener.OnListeningStoppedEvent += OnKeyListenerStopListen;
 
         NUD_Cps.Maximum = WAppSettings.MaxCps;
-        TB_State.Text = "";
+        TB_State.Text   = "";
         TT_Default.SetToolTip(B_FireKeyListen, WLoc.ToolTip_FireKey);
         TT_Default.SetToolTip(B_SimKeyListen, WLoc.ToolTip_SimKey);
         TT_Default.SetToolTip(B_Confirm, WLoc.ToolTip_Confirm);
@@ -41,7 +40,7 @@ public partial class MainForm : Form
         get => _FireKey;
         set
         {
-            _FireKey = value;
+            _FireKey        = value;
             Lb_FireKey.Text = GetTextFromKey(value);
         }
     }
@@ -53,22 +52,22 @@ public partial class MainForm : Form
         get => _SimKey;
         set
         {
-            _SimKey = value;
+            _SimKey        = value;
             Lb_SimKey.Text = GetTextFromKey(value);
         }
     }
 
-    public int ClickTickRate;
-    private bool bIsFireKeyDown;
-    private bool bIsWaitingFireKey;
-    private bool bIsWaitingSimKey;
-    private KeyListener MyKeyListener;
+    public  int            ClickTickRate;
+    private bool           bIsFireKeyDown;
+    private bool           bIsWaitingFireKey;
+    private bool           bIsWaitingSimKey;
+    private KeyListener    MyKeyListener;
     private InputSimulator MyInputSimulator;
-    private Thread ClickLoopThread;
-    private bool bIsSimulatingClick;
+    private Thread         ClickLoopThread;
+    private bool           bIsSimulatingClick;
 
 //==== Custom Toolbar ====\\.
-    private bool bIsDragging;
+    private bool  bIsDragging;
     private Point DragStartPoint;
 
 //#############################################################################
@@ -87,7 +86,7 @@ public partial class MainForm : Form
         if (e.Button == MouseButtons.Left)
         {
             // Capture la position du curseur par rapport à la barre d'outils
-            bIsDragging = true;
+            bIsDragging    = true;
             DragStartPoint = e.Location;
         }
     }
@@ -110,7 +109,7 @@ public partial class MainForm : Form
             int offsetY = e.Y - DragStartPoint.Y;
             // Mise à jour de la position du formulaire
             this.Left += offsetX;
-            this.Top += offsetY;
+            this.Top  += offsetY;
         }
     }
 
@@ -150,11 +149,10 @@ public partial class MainForm : Form
         Config.AppConfig ConfigObject = Config.ExtractConfig();
 
         NUD_Cps.Value = ConfigObject.Cps;
-        FireKey = ConfigObject.FireKey;
-        SimKey = ConfigObject.SimKey;
+        FireKey       = ConfigObject.FireKey;
+        SimKey        = ConfigObject.SimKey;
 
         ClickTickRate = (int)Math.Ceiling(1000.0 / ConfigObject.Cps);
-
     }
 
     private void B_Confirm_Click(object sender, EventArgs e)
@@ -163,23 +161,22 @@ public partial class MainForm : Form
         {
             ClickTickRate = (int)Math.Ceiling(1000.0 / (int)NUD_Cps.Value);
 
-            T_Confirm.Text = WLoc.Confirm_Success;
+            T_Confirm.Text      = WLoc.Confirm_Success;
             T_Confirm.ForeColor = WAppSettings.ConfirmTextColor_Success;
 
             Config.UpdateConfig(FireKey, SimKey, (int)NUD_Cps.Value);
         }
         else
         {
-            T_Confirm.Text = WLoc.Confirm_Failed;
+            T_Confirm.Text      = WLoc.Confirm_Failed;
             T_Confirm.ForeColor = WAppSettings.ConfirmTextColor_Failed;
         }
     }
 
     private void TM_FireKeyWaiting_Tick(object sender, EventArgs e)
     {
-        if (bIsWaitingFireKey || bIsWaitingSimKey)
-            return;
-        
+        if (bIsWaitingFireKey || bIsWaitingSimKey) return;
+
         // FireKey pressed
         if ((GetAsyncKeyState((int)_FireKey) & 0x8000) != 0)
         {
@@ -189,7 +186,7 @@ public partial class MainForm : Form
                 return;
             }
 
-            bIsFireKeyDown = true;
+            bIsFireKeyDown     = true;
             bIsSimulatingClick = !bIsSimulatingClick;
 
             if (bIsSimulatingClick)
@@ -197,9 +194,8 @@ public partial class MainForm : Form
                 ClickLoopThread = new Thread(ClickLoop);
                 ClickLoopThread.Start();
 
-                TB_State.Text = WLoc.State_Active;
+                TB_State.Text      = WLoc.State_Active;
                 TB_State.ForeColor = Color.FromArgb(255, 90, 0);
-
             }
             else
             {
@@ -207,8 +203,8 @@ public partial class MainForm : Form
                 {
                     ClickLoopThread.Join(); //Close thread
                 }
-                
-                TB_State.Text = WLoc.State_Inactive;
+
+                TB_State.Text      = WLoc.State_Inactive;
                 TB_State.ForeColor = Color.FromArgb(255, 200, 0);
             }
 
@@ -295,9 +291,8 @@ public partial class MainForm : Form
 //==== Events ====\\.
     private void B_FireKeyListen_Click(object sender, EventArgs e)
     {
-        if (bIsSimulatingClick)
-            return;
-        
+        if (bIsSimulatingClick) return;
+
         MyKeyListener.StartListenKey();
         bIsWaitingFireKey = true;
 
@@ -306,9 +301,8 @@ public partial class MainForm : Form
 
     private void B_SimKeyListen_Click(object sender, EventArgs e)
     {
-        if (bIsSimulatingClick)
-            return;
-        
+        if (bIsSimulatingClick) return;
+
         MyKeyListener.StartListenKey();
         bIsWaitingSimKey = true;
 
