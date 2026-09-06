@@ -1,6 +1,6 @@
 ﻿namespace WizClicker
 {
-    partial class InformationsForm
+    partial class InformationForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InformationsForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InformationForm));
             this.Custom_ToolsBar = new System.Windows.Forms.Panel();
             this.ToolsBar_Close_InfForm = new System.Windows.Forms.Button();
             this.ToolsBar_Close = new System.Windows.Forms.Button();
@@ -83,7 +83,7 @@
             this.ToolsBar_Close.TabIndex = 0;
             this.ToolsBar_Close.UseVisualStyleBackColor = true;
             // 
-            // InformationsForm
+            // InformationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -93,12 +93,11 @@
             this.Cursor = System.Windows.Forms.Cursors.Help;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "InformationsForm";
+            this.Name = "InformationForm";
             this.Text = "InformationsForm";
             this.Custom_ToolsBar.ResumeLayout(false);
             this.Custom_ToolsBar.PerformLayout();
             this.ResumeLayout(false);
-
         }
 
         #endregion

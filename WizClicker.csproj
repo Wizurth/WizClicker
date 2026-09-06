@@ -12,6 +12,7 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -39,9 +40,6 @@
     <ApplicationIcon>Resources\WizClicker.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -55,32 +53,26 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
-    <Reference Include="WindowsInput, Version=1.0.6.0, Culture=neutral, PublicKeyToken=de2685b4776e9c2e, processorArchitecture=MSIL">
-      <HintPath>packages\InputSimulatorPlus.1.0.7\lib\net20\WindowsInput.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config.cs" />
-    <Compile Include="MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="InformationsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="InformationsForm.Designer.cs">
-      <DependentUpon>InformationsForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="InformationsForm.resx">
-      <DependentUpon>InformationsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
+    <Compile Include="src\Form\InformationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\Form\InformationForm.Designer.cs">
+      <DependentUpon>InformationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="src\Form\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\Form\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
+    </Compile>
+    <Compile Include="src\KeyListener.cs" />
+    <Compile Include="src\Localization\LocKeys.cs" />
+    <Compile Include="src\AppSettings.cs" />
+    <Compile Include="src\Save\Config.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -91,7 +83,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="packages.config" />
+    <EmbeddedResource Include="src\Form\InformationForm.resx">
+      <DependentUpon>InformationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Form\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -130,12 +127,14 @@
     <None Include="Resources\Main.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include=".nuget\mouse-keyboard-hook-logo.png" />
     <None Include="Resources\MouseTargetButton_MiddleButton.png" />
     <None Include="Resources\MouseTargetButton_LeftButton.png" />
     <None Include="Resources\MouseTargetButton_RightButton.png" />
-    <Content Include="WizClicker.ico" />
     <None Include="Resources\WizClicker.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="InputSimulatorPlus2" Version="1.0.9" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
